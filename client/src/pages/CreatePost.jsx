@@ -1,16 +1,15 @@
 import React, { useState } from "react";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
-import { preview } from "../assets";
-import { getRandomPrompt } from "../utils";
+import { download, preview } from "../assets";
+import { downloadImage, getRandomPrompt } from "../utils";
 import { FormField, Loader } from "../components";
+import { apiRequest } from "../requestMethods";
 
 const CreatePost = () => {
     const navigate = useNavigate();
 
     const [form, setForm] = useState({
-        name: "",
         prompt: "",
         photo: "",
     });
@@ -23,30 +22,21 @@ const CreatePost = () => {
 
     const handleSurpriseMe = () => {
         const randomPrompt = getRandomPrompt(form.prompt);
-        setForm({ ...form, prompt: randomPrompt });
+        setForm({ photo: "", prompt: randomPrompt });
     };
 
     const generateImage = async () => {
         if (form.prompt) {
             try {
                 setGeneratingImg(true);
-                const response = await fetch(
+                const res = await apiRequest.post(
                     "http://localhost:5000/api/v1/dalle",
-                    {
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/json",
-                        },
-                        body: JSON.stringify({
-                            prompt: form.prompt,
-                        }),
-                    }
+                    { prompt: form.prompt }
                 );
 
-                const data = await response.json();
                 setForm({
                     ...form,
-                    photo: `data:image/jpeg;base64,${data.photo}`,
+                    photo: `data:image/jpeg;base64,${res.data.photo}`,
                 });
             } catch (err) {
                 alert(err);
@@ -64,12 +54,10 @@ const CreatePost = () => {
         if (form.prompt && form.photo) {
             setLoading(true);
             try {
-                const response = await axios.post(
+                const response = await apiRequest.post(
                     "http://localhost:5000/api/v1/post",
                     form
                 );
-
-                console.log(response);
                 alert("Success");
                 navigate("/");
             } catch (err) {
@@ -98,15 +86,6 @@ const CreatePost = () => {
             <form className="mt-16 max-w-3xl" onSubmit={handleSubmit}>
                 <div className="flex flex-col gap-5">
                     <FormField
-                        labelName="Your Name"
-                        type="text"
-                        name="name"
-                        placeholder="Ex., john doe"
-                        value={form.name}
-                        handleChange={handleChange}
-                    />
-
-                    <FormField
                         labelName="Prompt"
                         type="text"
                         name="prompt"
@@ -130,6 +109,21 @@ const CreatePost = () => {
                                 alt="preview"
                                 className="w-9/12 h-9/12 object-contain opacity-40"
                             />
+                        )}
+                        {form.photo && (
+                            <button
+                                type="button"
+                                onClick={() =>
+                                    downloadImage(form.prompt, form.photo)
+                                }
+                                className="outline-none bg-black border-none rounded-full absolute -right-7 bottom-0"
+                            >
+                                <img
+                                    src={download}
+                                    alt="download"
+                                    className="w-6 h-6 object-contain invert"
+                                />
+                            </button>
                         )}
 
                         {generatingImg && (

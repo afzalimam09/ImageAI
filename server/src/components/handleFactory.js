@@ -83,7 +83,8 @@ export function getAll(Model) {
             .filter()
             .sort()
             .limitFields()
-            .paginate();
+            .paginate()
+            .populate("userId");
 
         const doc = await features.query;
         // .explain();

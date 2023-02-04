@@ -20,6 +20,7 @@ export const uploadImage = catchAsync(async (req, res, next) => {
         if (uploadRes) {
             req.body.photoUrl = uploadRes.secure_url;
             req.body.photo = undefined;
+            req.body.userId = req.user._id;
         }
     }
     next();

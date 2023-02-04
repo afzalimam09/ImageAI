@@ -22,7 +22,8 @@ const app = express();
 // Global Middleware
 
 // Implement cors
-app.use(cors());
+app.use(cors({ credentials: true, origin: process.env.FRONTEND_URL }));
+app.options("*", cors({ credentials: true }));
 
 // Set Security HTTP headers
 app.use(helmet());

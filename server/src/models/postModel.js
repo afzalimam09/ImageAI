@@ -6,10 +6,6 @@ const Schema = mongoose.Schema;
 
 // Creating cab schema
 const postSchema = new Schema({
-    name: {
-        type: String,
-        required: [true, "Name is required!"],
-    },
     prompt: {
         type: String,
         required: [true, "Prompt is required!"],
@@ -20,7 +16,8 @@ const postSchema = new Schema({
     },
     userId: {
         type: Schema.Types.ObjectId,
-        // required: true,
+        ref: "User",
+        required: true,
     },
 });
 
