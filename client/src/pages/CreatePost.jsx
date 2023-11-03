@@ -29,10 +29,9 @@ const CreatePost = () => {
         if (form.prompt) {
             try {
                 setGeneratingImg(true);
-                const res = await apiRequest.post(
-                    "http://localhost:5000/api/v1/dalle",
-                    { prompt: form.prompt }
-                );
+                const res = await apiRequest.post("/dalle", {
+                    prompt: form.prompt,
+                });
 
                 setForm({
                     ...form,
@@ -54,10 +53,7 @@ const CreatePost = () => {
         if (form.prompt && form.photo) {
             setLoading(true);
             try {
-                const response = await apiRequest.post(
-                    "http://localhost:5000/api/v1/post",
-                    form
-                );
+                const response = await apiRequest.post("/post", form);
                 alert("Success");
                 navigate("/");
             } catch (err) {
