@@ -3,6 +3,7 @@ import { useState } from "react";
 import axios from "axios";
 import { Card, FormField, Loader } from "../components";
 import { Link } from "react-router-dom";
+import { apiRequest } from "../requestMethods";
 
 const RenderCards = ({ data, title }) => {
     if (data?.length > 0) {
@@ -27,9 +28,7 @@ const Home = () => {
         const fetchPosts = async () => {
             setLoading(true);
             try {
-                const res = await axios.get(
-                    "http://localhost:5000/api/v1/post"
-                );
+                const res = await apiRequest.get("/post");
                 setAllPosts(res.data.data.reverse());
             } catch (error) {
                 console.log(error);
